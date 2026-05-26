@@ -1,0 +1,30 @@
+name: use-normalize-tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate:
+        description: Valor a convertir
+        required: true
+        default: "Feature/Hot Fix Mayo 2026"
+
+jobs:
+  consume:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Usar action publicada
+        id: normalize
+        uses: MauricioGoik/normalize-tag-action@1.0.0
+        with:
+          raw_value: ${{ github.event.inputs.candidate }}
+          prefix: release
+          separator: "-"
+          max_length: "35"
+
+      - name: Reutilizar outputs
+        run: |
+          echo "TAG_FINAL=${{ steps.normalize.outputs.normalized_tag }}"
+          echo "LONGITUD=${{ steps.normalize.outputs.length }}"
+          echo "CAMBIO=${{ steps.normalize.outputs.was_modified }}"
+          echo 'JSON=${{ steps.normalize.outputs.summary_json }}'
